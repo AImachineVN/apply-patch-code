@@ -1,0 +1,220 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://applypatch.local/schemas/patch_v2.json",
+  "title": "Apply Patch Manifest v2 with Progress Report",
+  "description": "Cấu trúc chuẩn của file patch JSON, bao gồm progress_report bắt buộc theo tài liệu PHỐI HỢP AI.",
+  "type": "object",
+  "required": ["schema_version", "patches", "progress_report"],
+  "additionalProperties": true,
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "enum": ["1.0", "2.0"],
+      "description": "Phiên bản schema. Bắt buộc là '1.0' hoặc '2.0'."
+    },
+    "patch_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100,
+      "description": "Định danh duy nhất của bản vá."
+    },
+    "id": {"type": "string"},
+    "related_issue": {"type": "string"},
+    "description": {"type": "string"},
+    "author": {"type": "string"},
+    "date": {"type": "string"},
+    "target_projects": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1}
+    },
+    "project_types": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1}
+    },
+    "rollback_on_verify_failure": {"type": "boolean"},
+    "progress_report": {
+      "type": "object",
+      "description": "Báo cáo tiến độ dự án - bắt buộc theo 14 mục của tài liệu PHỐI HỢP AI.",
+      "required": [
+        "task_name",
+        "objective_and_scope",
+        "mandatory_info_for_next_ai"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "task_name": {"type": "string", "minLength": 1},
+        "objective_and_scope": {"type": "string", "minLength": 1},
+        "mandatory_info_for_next_ai": {"type": "string", "minLength": 1},
+        "completed_functions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "name"],
+            "properties": {
+              "id": {"type": "string", "minLength": 1},
+              "name": {"type": "string", "minLength": 1},
+              "completed_at": {"type": "string"}
+            },
+            "additionalProperties": false
+          }
+        },
+        "uncompleted_functions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "name"],
+            "properties": {
+              "id": {"type": "string", "minLength": 1},
+              "name": {"type": "string", "minLength": 1},
+              "reason": {"type": "string"}
+            },
+            "additionalProperties": false
+          }
+        },
+        "files_created": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1}
+        },
+        "files_modified_or_deleted": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["path", "action"],
+            "properties": {
+              "path": {"type": "string", "minLength": 1},
+              "action": {
+                "type": "string",
+                "enum": ["modified", "deleted"]
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "significant_changes": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "api_and_interface_changes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["file", "kind", "change"],
+            "properties": {
+              "file": {"type": "string", "minLength": 1},
+              "kind": {
+                "type": "string",
+                "enum": ["api", "function", "interface", "data"]
+              },
+              "change": {"type": "string", "minLength": 1}
+            },
+            "additionalProperties": false
+          }
+        },
+        "affected_modules": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1}
+        },
+        "source_tree": {
+          "type": "string",
+          "description": "ASCII tree snapshot của source code structure (optional). Ví dụ: 'src/\\n├── module_A/\\n└── module_B/'"
+        },
+        "test_results": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["command", "result"],
+            "properties": {
+              "command": {"type": "string", "minLength": 1},
+              "result": {"type": "string", "minLength": 1}
+            },
+            "additionalProperties": false
+          }
+        },
+        "remaining_issues_and_risks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "severity", "description"],
+            "properties": {
+              "id": {"type": "string", "minLength": 1},
+              "severity": {
+                "type": "string",
+                "enum": ["HIGH", "MEDIUM", "LOW"]
+              },
+              "description": {"type": "string", "minLength": 1}
+            },
+            "additionalProperties": false
+          }
+        },
+        "technical_decisions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "decision", "rationale"],
+            "properties": {
+              "id": {"type": "string", "minLength": 1},
+              "decision": {"type": "string", "minLength": 1},
+              "rationale": {"type": "string", "minLength": 1}
+            },
+            "additionalProperties": false
+          }
+        },
+        "proposed_next_work": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "name"],
+            "properties": {
+              "id": {"type": "string", "minLength": 1},
+              "name": {"type": "string", "minLength": 1},
+              "priority": {
+                "type": "string",
+                "enum": ["HIGH", "MEDIUM", "LOW"]
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    "patches": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": ["file", "operations"],
+            "properties": {
+              "file": {
+                "type": "string",
+                "pattern": "^(?!.*\\.\\.).*$"
+              },
+              "operations": {"type": "array", "minItems": 1},
+              "verify_markers": {"type": "array"},
+              "verify_after": {"type": "object"},
+              "optional": {"type": "boolean"},
+              "create_if_missing": {"type": "boolean"},
+              "encoding": {"type": "string"},
+              "language": {"type": ["string", "null"]},
+              "skip_syntax_check": {"type": "boolean"}
+            },
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": ["type", "path"],
+            "properties": {
+              "type": {"const": "create_directory"},
+              "path": {
+                "type": "string",
+                "pattern": "^(?!.*\\.\\.).*$"
+              }
+            },
+            "additionalProperties": false
+          }
+        ]
+      }
+    }
+  }
+}

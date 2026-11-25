@@ -1,0 +1,109 @@
+{
+  "schema_version": "2.0",
+  "patch_id": "PATCH-YYYY-NNN-UNIQUE-ID",
+  "description": "Short human-readable description of what this patch changes",
+  "author": "AI Name or Developer",
+  "date": "2026-11-09",
+  "target_projects": ["*"],
+  "project_types": ["*"],
+  "rollback_on_verify_failure": true,
+  "progress_report": {
+    "task_name": "Short task name — what was done",
+    "objective_and_scope": "Detailed description: goal, scope, files affected, expected outcome, edge cases handled",
+    "mandatory_info_for_next_ai": "CRITICAL context next AI must know: (1) decisions made, (2) pitfalls to avoid, (3) how to continue, (4) TEST or PRODUCTION patch. Include any regex/encoding edge cases.",
+    "completed_functions": [
+      {"id": "F-001", "name": "Function/feature A completed", "completed_at": "2026-11-09"},
+      {"id": "F-002", "name": "Function/feature B completed", "completed_at": "2026-11-09"}
+    ],
+    "uncompleted_functions": [
+      {"id": "F-003", "name": "Function C", "reason": "Reason why not completed"}
+    ],
+    "files_created": ["path/to/new_file.py"],
+    "files_modified_or_deleted": [
+      {"path": "path/to/modified.py", "action": "modified"},
+      {"path": "path/to/deleted.py", "action": "deleted"}
+    ],
+    "significant_changes": [
+      "Change 1 — what and why (impact on other modules)",
+      "Change 2 — what and why"
+    ],
+    "api_and_interface_changes": [
+      {"file": "path/to/api.py", "kind": "api", "change": "Signature changed from X to Y"}
+    ],
+    "affected_modules": ["module_a", "module_b", "module_c"],
+    "source_tree": "project_root/\n├── src/\n│   ├── module_A/\n│   ├── module_B/\n│   └── module_C/\n├── tests/\n└── docs/",
+    "test_results": [
+      {"command": "pytest -q", "result": "124 passed"},
+      {"command": "ruff check src/ tests/", "result": "All checks passed"},
+      {"command": "apply_patch validate Patches/Patch_XX.json", "result": "Valid patch"}
+    ],
+    "remaining_issues_and_risks": [
+      {"id": "RISK-001", "severity": "LOW", "description": "Known issue to watch"},
+      {"id": "RISK-002", "severity": "MEDIUM", "description": "Potential edge case"}
+    ],
+    "technical_decisions": [
+      {"id": "TD-001", "decision": "Use approach X instead of Y", "rationale": "Because of reason Z (e.g. Python regex uses \\1 not $1)"},
+      {"id": "TD-002", "decision": "Add skip_syntax_check for .txt files", "rationale": "Project default_language=python would fail syntax check"}
+    ],
+    "proposed_next_work": [
+      {"id": "N-001", "name": "Next task", "priority": "HIGH"},
+      {"id": "N-002", "name": "Nice to have", "priority": "LOW"}
+    ]
+  },
+  "patches": [
+    {
+      "file": "path/to/target.py",
+      "create_if_missing": false,
+      "skip_syntax_check": false,
+      "encoding": "utf-8",
+      "operations": [
+        {
+          "type": "replace",
+          "old_text": "DEBUG = True",
+          "new_text": "DEBUG = False",
+          "occurrence": 1
+        },
+        {
+          "type": "insert_after",
+          "anchor": "DEBUG = False",
+          "new_text": "# DEBUG disabled for production\n"
+        },
+        {
+          "type": "insert_before",
+          "anchor": "def main():",
+          "new_text": "def setup():\n    pass\n"
+        },
+        {
+          "type": "delete",
+          "old_text": "# TODO: remove this later\n"
+        },
+        {
+          "type": "replace_regex",
+          "pattern": "(\\d{3})(\\d{3})(\\d{4})",
+          "replacement": "\\1-\\2-\\3",
+          "flags": ""
+        }
+      ],
+      "verify_after": {
+        "contains": ["DEBUG = False", "def setup():"],
+        "not_contains": ["DEBUG = True"]
+      }
+    },
+    {
+      "file": "path/to/new_file.txt",
+      "create_if_missing": true,
+      "skip_syntax_check": true,
+      "encoding": "utf-8",
+      "operations": [
+        {
+          "type": "write_content",
+          "content": "File content here\n"
+        }
+      ]
+    },
+    {
+      "type": "create_directory",
+      "path": "new_folder/subfolder"
+    }
+  ]
+}

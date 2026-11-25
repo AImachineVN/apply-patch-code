@@ -1,0 +1,61 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "apply_patch"
+version = "1.0.0"
+description = "Enterprise Patch Application Tool"
+requires-python = ">=3.11"
+dependencies = [
+    "cryptography>=41.0.0",
+    "jsonschema>=4.20.0",
+    "regex>=2024.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.5.0",
+    "mypy>=1.10",
+]
+
+[project.scripts]
+apply_patch = "apply_patch.cli:main"
+apply_patch_gui = "apply_patch.gui.gui_main:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint.per-file-ignores]
+# Defensive catch-all patterns — đã review, đều là intentional:
+# - GUI logging handlers / worker callbacks
+# - Best-effort operations (serialize, record history, icon load)
+# - Security verify (crypto Ed25519)
+# - H2 fixes (schema path resolution)
+# - After cancel khi đóng app
+"src/apply_patch/gui/adapter.py" = ["BLE001"]
+"src/apply_patch/gui/views/main_view.py" = ["BLE001", "S110"]
+"src/apply_patch/gui/worker.py" = ["BLE001"]
+"src/apply_patch/patch_history.py" = ["BLE001"]
+"src/apply_patch/schema.py" = ["BLE001"]
+"src/apply_patch/updater/crypto_utils.py" = ["BLE001"]
+"src/apply_patch/updater/installer.py" = ["BLE001"]
+"src/apply_patch/engine.py" = ["BLE001"]
+"src/apply_patch/cli.py" = ["BLE001"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+ignore_missing_imports = true
