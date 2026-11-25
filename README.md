@@ -11,7 +11,7 @@ Apply Patch Code is a desktop tool that applies declarative JSON patches to sour
 - **Profiles Auto-sync**: Automatically updates 10 project status files after every patch.
 - **Atomic writes & Backups**: No partial writes. Auto-rollback on verify failure.
 - **Multi-language validation**: Python, JSON, XML, JS, PHP, Go, etc.
-
+- **CMD RUN**:.\.venv\Scripts\Activate.ps1 ; apply_patch_gui
 ## 📦 Installation
 Download the latest `ApplyPatchCode_Setup_v1.0.0.exe` from the [Releases](https://github.com/AImachineVN/apply-patch-code/releases) page.
 
